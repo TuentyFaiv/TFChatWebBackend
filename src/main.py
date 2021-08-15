@@ -1,0 +1,24 @@
+from flask import Flask
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = "secret!"
+CORS(app)
+socket = SocketIO(app, cors_allowed_origins="*")
+
+@app.get("/")
+def handle_home():
+  return "Hello world"
+
+@socket.on("connect")
+def handle_connect(auth):
+  print("Connected")
+  emit("connected user", { "data" : "Connected" })
+
+@socket.on("disconnect")
+def handle_disconnect():
+  print("Client disconnected")
+
+if __name__ == "__main__":
+  socket.run(app, debug=True, port="4000")
